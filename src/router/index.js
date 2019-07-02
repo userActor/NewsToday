@@ -1,14 +1,38 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import nprogress from 'nprogress'
+import { getUser } from '@/utils/auth'
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
     {
-      name: 'home',
+      name: 'layout',
       path: '/',
-      // 路由懒加载
-      component: () => import('@/views/home')
+      component: () => import('@/views/layout'),
+      children: [
+        // 所有的子路由都渲染到伏组件的router-view中
+        {
+          name: 'home',
+          path: '',
+          component: () => import('@/views/home')
+        },
+        {
+          name: 'article',
+          path: '/article',
+          component: () => import('@/views/article')
+        },
+        {
+          name: 'publish',
+          path: '/publish',
+          component: () => import('@/views/publish')
+        },
+        {
+          name: 'publish-edit',
+          path: '/publish/:id',
+          component: () => import('@/views/publish')
+        }
+      ]
     },
     {
       name: 'login',
@@ -17,3 +41,27 @@ export default new Router({
     }
   ]
 })
+router.beforeEach((to, from, next) => {
+  nprogress.start()
+  // const userInfo = window.localStorage.getItem('user_info')
+  const userInfo = getUser()
+  if (to.path !== '/login') {
+    if (!userInfo) {
+      return next({ name: 'login' })
+    } else {
+      next()
+    }
+  } else {
+    // 如果登录了就不允许再次访问登录页面
+    if (userInfo) {
+      next(false)
+    } else {
+      next()
+    }
+  }
+  // next()
+})
+router.afterEach((to, from) => {
+  nprogress.done()
+})
+export default router

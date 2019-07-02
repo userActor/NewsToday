@@ -60,16 +60,17 @@
 </template>
 
 <script>
-import axios from "axios";
+// import axios from "axios";
 import "@/vendor/gt";
+import { saveUser } from "@/utils/auth";
 const initCodeTimeSeconds = 60;
 export default {
   data() {
     return {
       formData: {
         mobile: "18614084953",
-        code: "",
-        agree: ""
+        code: "246810",
+        agree: true
       },
       rules: {
         mobile: [
@@ -109,29 +110,35 @@ export default {
         }
       });
     },
-    login() {
-      axios({
-        method: "POST",
-        url: "http://ttapi.research.itcast.cn/mp/v1_0/authorizations",
-        data: this.formData
-      })
-        .then(res => {
-          this.loginLoading = false;
-          this.$message({
-            message: "登陆成功",
-            type: "success"
-          });
-          this.$router.push({
-            name: "home"
-          });
-        })
-        .catch(err => {
-          this.loginLoading = false;
-          //>=400的状态吗会自动进入catch中
-          if (err.status === 400) {
-            this.$message.error("验证码错误");
-          }
+    async login() {
+      try {
+        const res = await this.$http({
+          method: "POST",
+          url: "/authorizations",
+          data: this.formData
         });
+        let userInfo = res;
+        console.log(userInfo);
+
+        saveUser(userInfo);
+        // window.localStorage.setItem("user_info", JSON.stringify(userInfo));
+        this.loginLoading = false;
+        this.$message({
+          message: "登陆成功",
+          type: "success"
+        });
+        this.$router.push({
+          name: "home"
+        });
+      } catch (error) {
+        // console.log(error);
+
+        this.loginLoading = false;
+        //>=400的状态吗会自动进入catch中
+        if (error.status === 400) {
+          this.$message.error("验证码错误");
+        }
+      }
     },
     handleSendCode() {
       this.$refs["form"].validateField("mobile", errorMessage => {
@@ -171,7 +178,7 @@ export default {
           captchaObj => {
             this.captchaObj = captchaObj;
             captchaObj
-              .onReady(function() {
+              .onReady(() => {
                 this.sendMobile = this.formData.mobile;
                 // 验证码ready之后才能调用verify方法显示验证码
                 captchaObj.verify();
@@ -195,11 +202,9 @@ export default {
                   }
                 }).then(res => {
                   // 开启倒计时效果
+                  this.$message.success("验证码成功发送");
                   this.codeCountDown();
                 });
-              })
-              .onError(function() {
-                // your code
               });
           }
         );
