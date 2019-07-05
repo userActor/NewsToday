@@ -6,7 +6,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import './styles/index.less'
 import '../node_modules/nprogress/nprogress.css'
 import axios from 'axios'
-import store from './store'
+import store from './store/store'
 import JSONBig from 'json-bigint'
 
 Vue.config.productionTip = false

@@ -121,6 +121,7 @@ export default {
         console.log(userInfo);
 
         saveUser(userInfo);
+        // this.$store.commit(changeUser, userInfo);
         // window.localStorage.setItem("user_info", JSON.stringify(userInfo));
         this.loginLoading = false;
         this.$message({

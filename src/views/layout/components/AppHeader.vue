@@ -18,10 +18,10 @@
         <span class="el-dropdown-link">
           <img
             width="30"
-            :src="userInfo.photo"
+            :src="$store.state.user.photo"
             class="user-img"
           >
-          {{userInfo.name}}<i class="el-icon-arrow-down el-icon--right"></i>
+          {{$store.state.user.name}}<i class="el-icon-arrow-down el-icon--right"></i>
         </span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item command="a">用户设置</el-dropdown-item>
@@ -42,12 +42,12 @@ export default {
   name: "AppHeader",
   data() {
     return {
-      userInfo: {}
+      // userInfo: {}
     };
   },
   created() {
     // this.userInfo = JSON.parse(window.localStorage.getItem("user_info"));
-    this.userInfo = getUser();
+    // this.userInfo = getUser();
   },
   methods: {
     handleLogout() {

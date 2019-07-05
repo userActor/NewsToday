@@ -119,6 +119,7 @@ export default {
           type: "success",
           message: "保存修改成功"
         });
+        console.log(data);
         // 提交 mutation，也就是调用 mutation 函数
         this.$store.commit("changeUser", data);
         // 不要直接这样修改，无法通过调试工具查看最新的容器数据状态，也观测不到修改 state 数据的历史记录

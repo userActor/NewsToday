@@ -71,7 +71,8 @@ export default {
       loading: false,
       editorOption: {
         // some quill options
-      }
+      },
+      dirty: false
     };
   },
   computed: {
@@ -168,6 +169,23 @@ export default {
   },
   mounted() {
     console.log("this is current quill instance object", this.editor);
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.dirty) {
+      window.confirm("页面有为保存的数据，是否离开？");
+      next(false);
+    } else {
+      return next();
+    }
+  },
+  watch: {
+    articleForm: {
+      handler() {
+        // console.log(123);
+        this.dirty = true;
+      },
+      deep: true
+    }
   }
 };
 </script>
