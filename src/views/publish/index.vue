@@ -88,6 +88,9 @@ export default {
     if (this.isEdit) {
       this.loadArticle();
     }
+    if (this.$route.name === "publish") {
+      this.watchForm();
+    }
   },
   components: {
     ArticleChannel,
@@ -157,6 +160,10 @@ export default {
           // console.log(res);
           this.loading = false;
           this.articleForm = res;
+          //更新数据加载好后开启监视
+          this.$nextTick(() => {
+            this.watchForm();
+          });
         })
         .catch(err => {
           this.loading = false;
@@ -165,28 +172,41 @@ export default {
             message: "加载失败"
           });
         });
+    },
+    watchForm() {
+      const unWatch = this.$watch(
+        "articleForm",
+        function() {
+          this.dirty = true;
+          //关闭件事
+          unWatch();
+        },
+        { deep: true }
+      );
     }
   },
   mounted() {
     console.log("this is current quill instance object", this.editor);
   },
   beforeRouteLeave(to, from, next) {
-    if (this.dirty) {
-      window.confirm("页面有为保存的数据，是否离开？");
-      next(false);
-    } else {
+    if (!this.dirty) {
       return next();
     }
-  },
-  watch: {
-    articleForm: {
-      handler() {
-        // console.log(123);
-        this.dirty = true;
-      },
-      deep: true
+    const answer = window.confirm("当前有为保存的数据，确认退出吗");
+    if (answer) {
+      next();
+    } else {
+      next(false);
     }
   }
+  // watch: {
+  //   articleForm: {
+  //     handler() {
+  //       this.dirty = true;
+  //     },
+  //     deep: true
+  //   }
+  // }
 };
 </script>
 
