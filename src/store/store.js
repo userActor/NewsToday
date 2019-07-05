@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { getUser, saveUser } from '@/utils/auth'
-
+// 进行监听，用来保证修改的用户信息和头部组件一致
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
